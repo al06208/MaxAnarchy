@@ -23,51 +23,111 @@ public class StringParser {
 	}
 	//dfa maker
 	public DFA export() {
-		DFA wumpus = new DFA(0, null, null);
+		DFA wumpus = new DFA(1, null, null);
 		try {
 			int length = (buff.readLine().length()-1)/2;
+			
+			System.out.println("length " + length);
+			
 			char[] stateLine = buff.readLine().toCharArray();
 			//make an arraylist of characters representing state IDs
+			
+			System.out.println("attempting to make state id array");
+			
 			for(int i=1;i<stateLine.length;i+=2) {
 			this.states.add(stateLine[i]);
 			}
+			
+			System.out.println("Success");
+			System.out.println("Attempting to get start id");
+			
 			//get the start state
 			this.start = buff.readLine().toCharArray()[0];
+			
+			System.out.println("Success");
+			System.out.println("Attempting to get accepting states");
+			
 			//get the accepting states
 			stateLine = buff.readLine().toCharArray();
 			for(int i=1;i<stateLine.length;i+=2) {
 				this.accepting.add(stateLine[i]);
 			}
+			
+			System.out.println("Success");
+			System.out.println("Attempting to make state array");
+			
 			//begin making state array
 			State[] stateArray = new State[states.size()];
 			int index = 0;
 			for(char c:states) {
+				
+				System.out.println("in: "+c);
+				
 				boolean accept = false;
 				for(char d:accepting) {
+					
+					System.out.println("out: "+d);
+					
 					if(c==d) {
+						
+						System.out.println("accept");
+						
 						accept = true;
 					}
 				}
-				stateArray[index] = new State(c, accept);
+				stateArray[index] = new State(length, accept, c);
+				
+				System.out.println(stateArray[index].id+"\n");
+				
 				index++;
 			}
+			
+			System.out.println("Success");
+			System.out.println(stateArray[0].id);
+			System.out.println("Attempting to bind transitions");
+			
 			//transition functions
-			String gurbl = buff.readLine();
-			while(!(gurbl.equals(null))) {
-				char[] gurb = gurbl.toCharArray();
-				//hurmph burmph
-				this.findState(gurb[1], stateArray).addTransition(Character.getNumericValue(gurb[3]), this.findState(gurb[7], stateArray));
+			String gurbl; // = buff.readLine();
+			while(buff.ready()) {
 				gurbl = buff.readLine();
+				char[] dubgurb = gurbl.toCharArray();
+				//hurmph burmph
+				
+				System.out.println("Trying to get from");
+				
+				State from = this.findState(dubgurb[1], stateArray);
+				
+				System.out.println("Trying to get to");
+				
+				State to = this.findState(dubgurb[7], stateArray);
+				
+				System.out.println("Success");
+				System.out.println(from.id);
+				System.out.println(to.id);
+				System.out.println(dubgurb[3]);
+				System.out.println("Success?");
+				
+				from.addTransition(Character.getNumericValue(dubgurb[3]), to);
+				
 			}
+			
+			System.out.println();
+			System.out.println("Success");
+			System.out.println("Attempting to build DFA");
+			
 			//build the DFA
 			wumpus = new DFA(length, stateArray, this.findState(start, stateArray));
+			
+			System.out.println("Success");
+			
 			//bring him home
 			buff.close();
 			in.close();
 		}
 		catch(Exception e) {
-			System.out.println("fuck");
+			System.out.println("shit");
 			System.out.println(e.toString()+"\n"+e.getMessage());
+			e.printStackTrace(System.out);
 			System.exit(1);
 		}
 		return wumpus;

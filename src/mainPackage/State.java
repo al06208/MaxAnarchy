@@ -6,9 +6,11 @@ public class State {
 	char id;
 	boolean accepting;
 	
-	public State(int length, boolean accept) {
+	public State(int length, boolean accept, char id) {
 		this.langlength = length;
 		this.accepting = accept;
+		this.transitionFns = new State[length];
+		this.id = id;
 	}
 	
 	public void addTransition(int index, State s) {
