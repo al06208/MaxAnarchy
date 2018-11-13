@@ -23,7 +23,7 @@ public class StringParser {
 	}
 	//dfa maker
 	public DFA export() {
-		DFA wumpus = new DFA(-1, null, null);
+		DFA wumpus = new DFA(0, null, null);
 		try {
 			int length = (buff.readLine().length()-1)/2;
 			char[] stateLine = buff.readLine().toCharArray();
