@@ -10,20 +10,22 @@ public class StringParser {
 	int length;
 	ArrayList<Character> states = new ArrayList<Character>();
 	ArrayList<Character> accepting = new ArrayList<Character>();
+	
 	//constructor
 	public StringParser(String file) {
 		try {
-		this.in = new FileReader(file);
-		this.buff = new BufferedReader(in);
+			this.in = new FileReader(file);
+			this.buff = new BufferedReader(in);
 		}
 		catch(Exception e) {
-			System.out.println("fuck");
-			System.out.println(e.toString()+"\n"+e.getMessage());
+			System.out.println("DFA text file not found. (StringParser.StringParser)");
+			e.printStackTrace();
 		}
 	}
-	//dfa maker
-	public DFA export() {
-		DFA wumpus = new DFA(1, null, null);
+	
+	//create dfa
+	public DFA create() {
+		DFA dfa = new DFA(1, null, null);
 		try {
 			int length = (buff.readLine().length()-1)/2;
 			
@@ -116,7 +118,7 @@ public class StringParser {
 			System.out.println("Attempting to build DFA");
 			
 			//build the DFA
-			wumpus = new DFA(length, stateArray, this.findState(start, stateArray));
+			dfa = new DFA(length, stateArray, this.findState(start, stateArray));
 			
 			System.out.println("Success");
 			
@@ -130,7 +132,7 @@ public class StringParser {
 			e.printStackTrace(System.out);
 			System.exit(1);
 		}
-		return wumpus;
+		return dfa;
 	
 	}
 	

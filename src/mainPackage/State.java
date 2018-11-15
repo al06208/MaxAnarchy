@@ -8,14 +8,15 @@ public class State {
 	
 	public State(int length, boolean accept, char id) {
 		this.langlength = length;
-		this.accepting = accept;
 		this.transitionFns = new State[length];
 		this.id = id;
+		this.accepting = accept;
 	}
 	
 	public void addTransition(int index, State s) {
 		this.transitionFns[index] = s;	
 	}
+	
 	public State getTransition(int index) {
 		return this.transitionFns[index];
 	}
