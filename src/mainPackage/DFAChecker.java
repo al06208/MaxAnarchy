@@ -6,14 +6,18 @@ public class DFAChecker {
 
 	public static void main(String[] args) {
 		Scanner in = new Scanner(System.in);
+		String path;
 		
-		//don't move on until they give you a straight answer
-		while(args[0].isEmpty()) {
+		if(args.length==0) {
 			System.out.println("Please specify a valid file path:\n");
-			args[0] = in.nextLine();
+			path = in.nextLine();
 		}
-		StringParser sp = new StringParser(args[0]);
-		DFA brumby = sp.create();
+		else {
+			path=args[0];
+		}
+		
+		StringParser sp = new StringParser(path);
+		DFA dfa = sp.create();
 		
 		System.out.println("Enter string with length more than 1: ");
 		
@@ -21,7 +25,7 @@ public class DFAChecker {
 		String input = in.nextLine();
 		in.close();
 		
-		if(brumby.checkString(input)) {
+		if(dfa.checkString(input)) {
 			System.out.println("String accepted.");
 		}
 		else {
