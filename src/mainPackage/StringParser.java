@@ -17,9 +17,10 @@ public class StringParser {
 			this.in = new FileReader(file);
 			this.buff = new BufferedReader(in);
 		}
-		catch(Exception e) {
+		catch(FileNotFoundException e) {
 			System.out.println("DFA text file not found. (StringParser.StringParser)");
 			e.printStackTrace();
+			System.exit(1);
 		}
 	}
 	
@@ -29,109 +30,76 @@ public class StringParser {
 		try {
 			int length = (buff.readLine().length()-1)/2;
 			
-			System.out.println("length " + length);
-			
+			//because we only accept sequential integer languages, 
+			//the length of the language determines its content
 			char[] stateLine = buff.readLine().toCharArray();
+			
 			//make an arraylist of characters representing state IDs
-			
-			System.out.println("attempting to make state id array");
-			
 			for(int i=1;i<stateLine.length;i+=2) {
-			this.states.add(stateLine[i]);
+				this.states.add(stateLine[i]);
 			}
-			
-			System.out.println("Success");
-			System.out.println("Attempting to get start id");
 			
 			//get the start state
 			this.start = buff.readLine().toCharArray()[0];
-			
-			System.out.println("Success");
-			System.out.println("Attempting to get accepting states");
-			
+
 			//get the accepting states
 			stateLine = buff.readLine().toCharArray();
 			for(int i=1;i<stateLine.length;i+=2) {
 				this.accepting.add(stateLine[i]);
 			}
-			
-			System.out.println("Success");
-			System.out.println("Attempting to make state array");
-			
+
 			//begin making state array
 			State[] stateArray = new State[states.size()];
 			int index = 0;
 			for(char c:states) {
 				
-				System.out.println("in: "+c);
-				
+				//make a state for each given ID
 				boolean accept = false;
+				
+				//check each new state's ID against all the accepting IDs
 				for(char d:accepting) {
-					
-					System.out.println("out: "+d);
-					
 					if(c==d) {
-						
-						System.out.println("accept");
-						
 						accept = true;
 					}
 				}
 				stateArray[index] = new State(length, accept, c);
 				
-				System.out.println(stateArray[index].id+"\n");
-				
+				//increment the index variable
 				index++;
 			}
-			
-			System.out.println("Success");
-			System.out.println(stateArray[0].id);
-			System.out.println("Attempting to bind transitions");
-			
+
 			//transition functions
-			String gurbl; // = buff.readLine();
+			String thisLine; 
 			while(buff.ready()) {
-				gurbl = buff.readLine();
-				char[] dubgurb = gurbl.toCharArray();
-				//hurmph burmph
 				
-				System.out.println("Trying to get from");
+				//convert the next line into a char array
+				thisLine = buff.readLine();
+				char[] lineArray = thisLine.toCharArray();
+
+				//using specific indices determined by the input file's syntax,
+				//find the IDs of the start and end states, and the terminal to transition
+				//between them
+				State from = this.findState(lineArray[1], stateArray);
+				State to = this.findState(lineArray[7], stateArray);
 				
-				State from = this.findState(dubgurb[1], stateArray);
-				
-				System.out.println("Trying to get to");
-				
-				State to = this.findState(dubgurb[7], stateArray);
-				
-				System.out.println("Success");
-				System.out.println(from.id);
-				System.out.println(to.id);
-				System.out.println(dubgurb[3]);
-				System.out.println("Success?");
-				
-				from.addTransition(Character.getNumericValue(dubgurb[3]), to);
+				//add the transition from the start to the end state
+				from.addTransition(Character.getNumericValue(lineArray[3]), to);
 				
 			}
-			
-			System.out.println();
-			System.out.println("Success");
-			System.out.println("Attempting to build DFA");
-			
+
 			//build the DFA
 			dfa = new DFA(length, stateArray, this.findState(start, stateArray));
-			
-			System.out.println("Success");
-			
-			//bring him home
+
+			//avoid memory leaks
 			buff.close();
 			in.close();
 		}
 		catch(Exception e) {
-			System.out.println("shit");
-			System.out.println(e.toString()+"\n"+e.getMessage());
+			System.out.println("Weird Exception Encountered: Check Your DFA! (StringParser.Create)");
 			e.printStackTrace(System.out);
 			System.exit(1);
 		}
+		//bring him home
 		return dfa;
 	
 	}

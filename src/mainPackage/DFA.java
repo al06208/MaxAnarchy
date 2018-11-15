@@ -1,13 +1,13 @@
 package mainPackage;
 
 public class DFA {
-	private int langLength;
-	private State[] states;
+	//private int langLength;
+	//private State[] states;
 	private State start;
 	
 public DFA(int length, State[] states, State start) {
-	this.langLength = length;
-	this.states = states;
+	//this.langLength = length;
+	//this.states = states;
 	this.start=start;
 }
 	public boolean checkString(String string) {
